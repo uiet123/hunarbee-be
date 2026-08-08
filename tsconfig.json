@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/shared" },
+    { "path": "./services/auth-service" },
+    { "path": "./services/programs-service" },
+    { "path": "./services/gateway" }
+  ]
+}

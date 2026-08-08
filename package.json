@@ -1,0 +1,47 @@
+{
+  "name": "hunarbee-be",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hunarbee microservices monorepo — single node_modules, API gateway",
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n gateway,auth,programs -c yellow,cyan,magenta \"npm run dev -w @hunarbee/gateway\" \"npm run dev -w @hunarbee/auth-service\" \"npm run dev -w @hunarbee/programs-service\"",
+    "dev:gateway": "npm run dev -w @hunarbee/gateway",
+    "dev:auth": "npm run dev -w @hunarbee/auth-service",
+    "dev:programs": "npm run dev -w @hunarbee/programs-service",
+    "build": "npm run build -w @hunarbee/shared && npm run build -w @hunarbee/auth-service && npm run build -w @hunarbee/programs-service && npm run build -w @hunarbee/gateway",
+    "start": "concurrently -k -n gateway,auth,programs -c yellow,cyan,magenta \"npm run start -w @hunarbee/gateway\" \"npm run start -w @hunarbee/auth-service\" \"npm run start -w @hunarbee/programs-service\"",
+    "db:migrate": "npm run db:migrate -w @hunarbee/shared",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^9.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "http-proxy-middleware": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "pg": "^8.13.3",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.13.10",
+    "@types/pg": "^8.11.11",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

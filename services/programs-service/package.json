@@ -1,0 +1,16 @@
+{
+  "name": "@hunarbee/programs-service",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/server.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@hunarbee/shared": "*",
+    "express": "*"
+  }
+}
