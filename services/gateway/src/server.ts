@@ -23,6 +23,7 @@ app.get("/api/health", (_req, res) => {
     services: {
       auth: env.AUTH_SERVICE_URL,
       programs: env.PROGRAMS_SERVICE_URL,
+      payments: env.PAYMENTS_SERVICE_URL,
     },
     timestamp: new Date().toISOString(),
   });
@@ -48,6 +49,16 @@ app.use(
   })
 );
 
+/** Payments microservice — /api/payments/* */
+app.use(
+  "/api/payments",
+  createProxyMiddleware({
+    target: env.PAYMENTS_SERVICE_URL,
+    changeOrigin: true,
+    pathRewrite: { "^/api/payments": "" },
+  })
+);
+
 app.use((_req, res) => {
   res.status(404).json({
     success: false,
@@ -59,4 +70,5 @@ app.listen(env.GATEWAY_PORT, () => {
   console.log(`[gateway] listening on http://localhost:${env.GATEWAY_PORT}`);
   console.log(`[gateway] proxy auth -> ${env.AUTH_SERVICE_URL}`);
   console.log(`[gateway] proxy programs -> ${env.PROGRAMS_SERVICE_URL}`);
+  console.log(`[gateway] proxy payments -> ${env.PAYMENTS_SERVICE_URL}`);
 });

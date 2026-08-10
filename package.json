@@ -8,12 +8,13 @@
     "services/*"
   ],
   "scripts": {
-    "dev": "concurrently -k -n gateway,auth,programs -c yellow,cyan,magenta \"npm run dev -w @hunarbee/gateway\" \"npm run dev -w @hunarbee/auth-service\" \"npm run dev -w @hunarbee/programs-service\"",
+    "dev": "concurrently -k -n gateway,auth,programs,payments -c yellow,cyan,magenta,green \"npm run dev -w @hunarbee/gateway\" \"npm run dev -w @hunarbee/auth-service\" \"npm run dev -w @hunarbee/programs-service\" \"npm run dev -w @hunarbee/payments-service\"",
     "dev:gateway": "npm run dev -w @hunarbee/gateway",
     "dev:auth": "npm run dev -w @hunarbee/auth-service",
     "dev:programs": "npm run dev -w @hunarbee/programs-service",
-    "build": "npm run build -w @hunarbee/shared && npm run build -w @hunarbee/auth-service && npm run build -w @hunarbee/programs-service && npm run build -w @hunarbee/gateway",
-    "start": "concurrently -k -n gateway,auth,programs -c yellow,cyan,magenta \"npm run start -w @hunarbee/gateway\" \"npm run start -w @hunarbee/auth-service\" \"npm run start -w @hunarbee/programs-service\"",
+    "dev:payments": "npm run dev -w @hunarbee/payments-service",
+    "build": "npm run build -w @hunarbee/shared && npm run build -w @hunarbee/auth-service && npm run build -w @hunarbee/programs-service && npm run build -w @hunarbee/payments-service && npm run build -w @hunarbee/gateway",
+    "start": "concurrently -k -n gateway,auth,programs,payments -c yellow,cyan,magenta,green \"npm run start -w @hunarbee/gateway\" \"npm run start -w @hunarbee/auth-service\" \"npm run start -w @hunarbee/programs-service\" \"npm run start -w @hunarbee/payments-service\"",
     "db:migrate": "npm run db:migrate -w @hunarbee/shared",
     "lint": "npm run lint --workspaces --if-present"
   },
@@ -31,6 +32,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "pg": "^8.13.3",
+    "razorpay": "^2.9.6",
     "zod": "^3.24.2"
   },
   "devDependencies": {

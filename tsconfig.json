@@ -4,6 +4,7 @@
     { "path": "./packages/shared" },
     { "path": "./services/auth-service" },
     { "path": "./services/programs-service" },
+    { "path": "./services/payments-service" },
     { "path": "./services/gateway" }
   ]
 }
