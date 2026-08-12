@@ -48,6 +48,7 @@ CREATE INDEX IF NOT EXISTS idx_payments_email ON payments (applicant_email);
 CREATE TABLE IF NOT EXISTS enrollments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   payment_id UUID NOT NULL UNIQUE REFERENCES payments (id) ON DELETE RESTRICT,
+  user_id UUID REFERENCES users (id) ON DELETE SET NULL,
   full_name VARCHAR(120) NOT NULL,
   email VARCHAR(255) NOT NULL,
   phone VARCHAR(20) NOT NULL,
@@ -60,13 +61,19 @@ CREATE TABLE IF NOT EXISTS enrollments (
   amount_paise INTEGER NOT NULL,
   status VARCHAR(20) NOT NULL DEFAULT 'active'
     CHECK (status IN ('active', 'cancelled', 'completed')),
+  welcome_email_sent_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Safe upgrades for existing enrollments tables
+ALTER TABLE enrollments ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES users (id) ON DELETE SET NULL;
+ALTER TABLE enrollments ADD COLUMN IF NOT EXISTS welcome_email_sent_at TIMESTAMPTZ;
+
 CREATE INDEX IF NOT EXISTS idx_enrollments_email ON enrollments (email);
 CREATE INDEX IF NOT EXISTS idx_enrollments_program ON enrollments (program_id);
 CREATE INDEX IF NOT EXISTS idx_enrollments_batch ON enrollments (preferred_batch);
+CREATE INDEX IF NOT EXISTS idx_enrollments_user ON enrollments (user_id);
 `;
 
 async function migrate() {

@@ -10,6 +10,7 @@ import {
 } from "@hunarbee/shared";
 import { razorpay } from "../lib/razorpay";
 import { getCurrencyPricing, getLivePlanPrice } from "./fx.service";
+import { provisionEnrollmentAccess } from "./provision.service";
 
 interface CreateOrderInput {
   durationId: PaymentDurationId;
@@ -330,6 +331,11 @@ async function fulfillPaidOrder(input: {
   }
 
   const enrollmentId = await createEnrollmentFromPayment(payment);
+
+  if (enrollmentId) {
+    // User create + SMTP welcome email (non-blocking for payment correctness)
+    await provisionEnrollmentAccess(enrollmentId);
+  }
 
   return {
     orderId: input.razorpay_order_id,

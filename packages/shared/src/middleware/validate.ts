@@ -16,7 +16,7 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-export const PAYMENT_DURATION_IDS = ["1-month", "3-months"] as const;
+export const PAYMENT_DURATION_IDS = ["1-month", "2-months", "3-months"] as const;
 
 /**
  * Any ISO 4217 currency code (3 letters).
@@ -67,7 +67,8 @@ export const THREE_DECIMAL_CURRENCIES = [
 /** Base catalog prices in INR — live FX converts from these. */
 export const BASE_INR_PRICES: Record<PaymentDurationId, number> = {
   "1-month": 499,
-  "3-months": 999,
+  "2-months": 999,
+  "3-months": 1499,
 };
 
 /**
@@ -76,7 +77,8 @@ export const BASE_INR_PRICES: Record<PaymentDurationId, number> = {
  */
 export const USD_FALLBACK_PRICES: Record<PaymentDurationId, number> = {
   "1-month": 6,
-  "3-months": 12,
+  "2-months": 12,
+  "3-months": 18,
 };
 
 /** Round converted major units; never charge less than 1 for non-INR. */

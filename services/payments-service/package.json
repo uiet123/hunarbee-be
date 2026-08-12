@@ -12,6 +12,7 @@
   "dependencies": {
     "@hunarbee/shared": "*",
     "express": "*",
+    "nodemailer": "^9.0.5",
     "razorpay": "^2.9.6"
   }
 }

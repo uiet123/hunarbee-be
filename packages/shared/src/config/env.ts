@@ -28,6 +28,18 @@ const envSchema = z.object({
   RAZORPAY_WEBHOOK_SECRET: z.string().optional().default(""),
   /** ExchangeRate-API v6 key — required for live FX pricing */
   EXCHANGE_RATE_API_KEY: z.string().min(1, "EXCHANGE_RATE_API_KEY is required"),
+  /** SMTP — welcome / offer emails after enrollment */
+  SMTP_HOST: z.string().optional().default(""),
+  SMTP_PORT: z.coerce.number().default(587),
+  SMTP_SECURE: z
+    .string()
+    .optional()
+    .default("false")
+    .transform((value) => value === "true" || value === "1"),
+  SMTP_USER: z.string().optional().default(""),
+  SMTP_PASS: z.string().optional().default(""),
+  EMAIL_FROM: z.string().optional().default("Hunarbee <noreply@hunarbee.com>"),
+  PORTAL_URL: z.string().optional().default("https://portal.hunarbee.com"),
 });
 
 const parsed = envSchema.safeParse(process.env);

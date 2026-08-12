@@ -68,6 +68,18 @@ export async function loginUser(input: { email: string; password: string }) {
   return { user: toPublicUser(user), token };
 }
 
+/** Student portal login — only student (and admin) roles. */
+export async function loginPortalUser(input: {
+  email: string;
+  password: string;
+}) {
+  const data = await loginUser(input);
+  if (data.user.role !== "student" && data.user.role !== "admin") {
+    throw new AppError("This portal is for Hunarbee students", 403);
+  }
+  return data;
+}
+
 export async function getUserById(userId: string) {
   const result = await query<AuthUser>(
     `SELECT id, name, email, role, created_at
@@ -81,4 +93,59 @@ export async function getUserById(userId: string) {
   }
 
   return toPublicUser(user);
+}
+
+export interface PortalEnrollment {
+  id: string;
+  programId: string;
+  durationId: string;
+  preferredBatch: string;
+  status: string;
+  currency: string;
+  amountPaise: number;
+  createdAt: string;
+}
+
+/** Student home: profile + enrollments. */
+export async function getPortalHome(userId: string) {
+  const user = await getUserById(userId);
+
+  if (user.role !== "student" && user.role !== "admin") {
+    throw new AppError("This portal is for Hunarbee students", 403);
+  }
+
+  const enrollments = await query<{
+    id: string;
+    program_id: string;
+    duration_id: string;
+    preferred_batch: string;
+    status: string;
+    currency: string;
+    amount_paise: number;
+    created_at: string;
+  }>(
+    `SELECT id, program_id, duration_id,
+            preferred_batch::text AS preferred_batch,
+            status, currency, amount_paise, created_at
+     FROM enrollments
+     WHERE user_id = $1 OR lower(email) = lower($2)
+     ORDER BY created_at DESC`,
+    [userId, user.email]
+  );
+
+  return {
+    user,
+    enrollments: enrollments.rows.map(
+      (row): PortalEnrollment => ({
+        id: row.id,
+        programId: row.program_id,
+        durationId: row.duration_id,
+        preferredBatch: row.preferred_batch,
+        status: row.status,
+        currency: row.currency,
+        amountPaise: row.amount_paise,
+        createdAt: row.created_at,
+      })
+    ),
+  };
 }

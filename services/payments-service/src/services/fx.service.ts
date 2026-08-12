@@ -113,16 +113,26 @@ async function loadRates(): Promise<CachedRates> {
   return inflight;
 }
 
+function convertPlansFromInr(
+  rateFromInr: number
+): Record<PaymentDurationId, number> {
+  const plans = {} as Record<PaymentDurationId, number>;
+  for (const durationId of Object.keys(BASE_INR_PRICES) as PaymentDurationId[]) {
+    plans[durationId] = roundConvertedAmount(
+      BASE_INR_PRICES[durationId],
+      rateFromInr
+    );
+  }
+  return plans;
+}
+
 function buildUsdFallback(
   asOf?: string,
   rateFromInr?: number | null
 ): CurrencyPricing {
   const plans =
     typeof rateFromInr === "number" && rateFromInr > 0
-      ? {
-          "1-month": roundConvertedAmount(BASE_INR_PRICES["1-month"], rateFromInr),
-          "3-months": roundConvertedAmount(BASE_INR_PRICES["3-months"], rateFromInr),
-        }
+      ? convertPlansFromInr(rateFromInr)
       : { ...USD_FALLBACK_PRICES };
 
   return {
@@ -175,10 +185,7 @@ export async function getCurrencyPricing(
         provider: cached.source,
         asOf: cached.asOf,
         baseInr,
-        plans: {
-          "1-month": roundConvertedAmount(BASE_INR_PRICES["1-month"], rate),
-          "3-months": roundConvertedAmount(BASE_INR_PRICES["3-months"], rate),
-        },
+        plans: convertPlansFromInr(rate),
         rateFromInr: rate,
       };
     }
