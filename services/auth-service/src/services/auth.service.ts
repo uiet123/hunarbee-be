@@ -43,7 +43,7 @@ export async function registerUser(input: {
     throw new AppError("Failed to create user", 500);
   }
 
-  const token = signToken({ userId: user.id, email: user.email });
+  const token = signToken({ userId: user.id, email: user.email, role: user.role });
   return { user: toPublicUser(user), token };
 }
 
@@ -64,7 +64,7 @@ export async function loginUser(input: { email: string; password: string }) {
     throw new AppError("Invalid email or password", 401);
   }
 
-  const token = signToken({ userId: user.id, email: user.email });
+  const token = signToken({ userId: user.id, email: user.email, role: user.role });
   return { user: toPublicUser(user), token };
 }
 

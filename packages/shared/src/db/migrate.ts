@@ -74,6 +74,62 @@ CREATE INDEX IF NOT EXISTS idx_enrollments_email ON enrollments (email);
 CREATE INDEX IF NOT EXISTS idx_enrollments_program ON enrollments (program_id);
 CREATE INDEX IF NOT EXISTS idx_enrollments_batch ON enrollments (preferred_batch);
 CREATE INDEX IF NOT EXISTS idx_enrollments_user ON enrollments (user_id);
+
+CREATE TABLE IF NOT EXISTS programs (
+  id VARCHAR(64) PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  duration VARCHAR(64) NOT NULL DEFAULT '',
+  mode VARCHAR(64) NOT NULL DEFAULT '',
+  highlights JSONB DEFAULT '[]',
+  description TEXT NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'published'
+    CHECK (status IN ('published', 'draft', 'archived')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS plans (
+  id VARCHAR(64) PRIMARY KEY,
+  program_id VARCHAR(64) NOT NULL REFERENCES programs(id) ON DELETE CASCADE,
+  name VARCHAR(120) NOT NULL,
+  price_paise INTEGER NOT NULL,
+  currency VARCHAR(10) NOT NULL DEFAULT 'INR',
+  duration_months INTEGER NOT NULL,
+  total_days INTEGER NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'published'
+    CHECK (status IN ('published', 'draft', 'archived')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS curriculum_days (
+  id VARCHAR(64) PRIMARY KEY,
+  plan_id VARCHAR(64) NOT NULL REFERENCES plans(id) ON DELETE CASCADE,
+  day_number INTEGER NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  estimated_time_minutes INTEGER NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'active'
+    CHECK (status IN ('active', 'draft')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS tasks (
+  id VARCHAR(64) PRIMARY KEY,
+  curriculum_day_id VARCHAR(64) NOT NULL REFERENCES curriculum_days(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  instructions TEXT NOT NULL,
+  estimated_time_minutes INTEGER NOT NULL,
+  submission_required BOOLEAN NOT NULL DEFAULT false,
+  mentor_review_required BOOLEAN NOT NULL DEFAULT false,
+  status VARCHAR(20) NOT NULL DEFAULT 'active'
+    CHECK (status IN ('active', 'draft')),
+  resources JSONB DEFAULT '[]',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 `;
 
 async function migrate() {

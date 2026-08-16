@@ -15,6 +15,8 @@ const envSchema = z.object({
   PROGRAMS_SERVICE_URL: z.string().default("http://localhost:5002"),
   PAYMENTS_SERVICE_PORT: z.coerce.number().default(5003),
   PAYMENTS_SERVICE_URL: z.string().default("http://localhost:5003"),
+  ADMIN_SERVICE_PORT: z.coerce.number().default(5004),
+  ADMIN_SERVICE_URL: z.string().default("http://localhost:5004"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   JWT_SECRET: z.string().min(16, "JWT_SECRET must be at least 16 characters"),
   JWT_EXPIRES_IN: z.string().default("7d"),

@@ -8,13 +8,14 @@
     "services/*"
   ],
   "scripts": {
-    "dev": "concurrently -k -n gateway,auth,programs,payments -c yellow,cyan,magenta,green \"npm run dev -w @hunarbee/gateway\" \"npm run dev -w @hunarbee/auth-service\" \"npm run dev -w @hunarbee/programs-service\" \"npm run dev -w @hunarbee/payments-service\"",
+    "dev": "concurrently -k -n gateway,auth,programs,payments,admin -c yellow,cyan,magenta,green,blue \"npm run dev -w @hunarbee/gateway\" \"npm run dev -w @hunarbee/auth-service\" \"npm run dev -w @hunarbee/programs-service\" \"npm run dev -w @hunarbee/payments-service\" \"npm run dev -w @hunarbee/admin-service\"",
     "dev:gateway": "npm run dev -w @hunarbee/gateway",
     "dev:auth": "npm run dev -w @hunarbee/auth-service",
     "dev:programs": "npm run dev -w @hunarbee/programs-service",
     "dev:payments": "npm run dev -w @hunarbee/payments-service",
-    "build": "npm run build -w @hunarbee/shared && npm run build -w @hunarbee/auth-service && npm run build -w @hunarbee/programs-service && npm run build -w @hunarbee/payments-service && npm run build -w @hunarbee/gateway",
-    "start": "concurrently -k -n gateway,auth,programs,payments -c yellow,cyan,magenta,green \"npm run start -w @hunarbee/gateway\" \"npm run start -w @hunarbee/auth-service\" \"npm run start -w @hunarbee/programs-service\" \"npm run start -w @hunarbee/payments-service\"",
+    "dev:admin": "npm run dev -w @hunarbee/admin-service",
+    "build": "npm run build -w @hunarbee/shared && npm run build -w @hunarbee/auth-service && npm run build -w @hunarbee/programs-service && npm run build -w @hunarbee/payments-service && npm run build -w @hunarbee/admin-service && npm run build -w @hunarbee/gateway",
+    "start": "concurrently -k -n gateway,auth,programs,payments,admin -c yellow,cyan,magenta,green,blue \"npm run start -w @hunarbee/gateway\" \"npm run start -w @hunarbee/auth-service\" \"npm run start -w @hunarbee/programs-service\" \"npm run start -w @hunarbee/payments-service\" \"npm run start -w @hunarbee/admin-service\"",
     "db:migrate": "npm run db:migrate -w @hunarbee/shared",
     "lint": "npm run lint --workspaces --if-present"
   },

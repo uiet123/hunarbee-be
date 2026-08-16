@@ -1,30 +1,44 @@
 import { Router } from "express";
-import { PROGRAMS } from "../data/programs";
+import { query } from "@hunarbee/shared";
 
 const router = Router();
 
-router.get("/", (_req, res) => {
-  res.json({
-    success: true,
-    data: { programs: PROGRAMS },
-  });
+router.get("/", async (_req, res, next) => {
+  try {
+    const result = await query(
+      "SELECT id, name as title, description, duration, mode, highlights, status FROM programs WHERE status = 'published'"
+    );
+    res.json({
+      success: true,
+      data: { programs: result.rows },
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.get("/:id", (req, res) => {
-  const program = PROGRAMS.find((item) => item.id === req.params.id);
+router.get("/:id", async (req, res, next) => {
+  try {
+    const progResult = await query(
+      "SELECT id, name as title, description, duration, mode, highlights, status FROM programs WHERE id = $1 AND status = 'published'",
+      [req.params.id]
+    );
 
-  if (!program) {
-    res.status(404).json({
-      success: false,
-      message: "Program not found",
+    if (progResult.rows.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: "Program not found",
+      });
+      return;
+    }
+
+    res.json({
+      success: true,
+      data: { program: progResult.rows[0] },
     });
-    return;
+  } catch (error) {
+    next(error);
   }
-
-  res.json({
-    success: true,
-    data: { program },
-  });
 });
 
 export default router;

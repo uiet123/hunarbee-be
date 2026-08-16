@@ -10,7 +10,7 @@ const app = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: env.CORS_ORIGIN,
+    origin: true,
     credentials: true,
   })
 );
@@ -59,6 +59,16 @@ app.use(
   })
 );
 
+/** Admin microservice — /api/admin/* */
+app.use(
+  "/api/admin",
+  createProxyMiddleware({
+    target: env.ADMIN_SERVICE_URL,
+    changeOrigin: true,
+    pathRewrite: { "^/api/admin": "" },
+  })
+);
+
 app.use((_req, res) => {
   res.status(404).json({
     success: false,
@@ -71,4 +81,5 @@ app.listen(env.GATEWAY_PORT, () => {
   console.log(`[gateway] proxy auth -> ${env.AUTH_SERVICE_URL}`);
   console.log(`[gateway] proxy programs -> ${env.PROGRAMS_SERVICE_URL}`);
   console.log(`[gateway] proxy payments -> ${env.PAYMENTS_SERVICE_URL}`);
+  console.log(`[gateway] proxy admin -> ${env.ADMIN_SERVICE_URL}`);
 });

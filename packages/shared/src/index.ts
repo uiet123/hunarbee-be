@@ -12,7 +12,7 @@ export function createServiceApp(serviceName: string) {
   app.use(helmet());
   app.use(
     cors({
-      origin: env.CORS_ORIGIN,
+      origin: true,
       credentials: true,
     })
   );
@@ -59,6 +59,7 @@ export function startService(
 export * from "./config/env";
 export * from "./db/pool";
 export * from "./middleware/auth";
+export * from "./middleware/admin";
 export * from "./middleware/error";
 export * from "./middleware/validate";
 export * from "./utils/auth";

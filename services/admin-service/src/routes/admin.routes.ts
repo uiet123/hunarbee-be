@@ -1,0 +1,18 @@
+import { Router } from "express";
+import { requireAuth, requireAdmin } from "@hunarbee/shared";
+import * as adminController from "../controllers/admin.controller";
+
+const router = Router();
+
+// Apply auth and admin middleware to all routes in this service
+router.use(requireAuth, requireAdmin);
+
+router.get("/stats", adminController.getStats);
+router.get("/applications", adminController.getApplications);
+router.get("/payments", adminController.getPayments);
+router.get("/students", adminController.getStudents);
+router.get("/students/:id", adminController.getStudentDetails);
+router.get("/programs", adminController.getPrograms);
+router.put("/programs/:id/status", adminController.updateProgramStatus);
+
+export default router;
