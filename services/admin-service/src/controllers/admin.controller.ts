@@ -191,3 +191,76 @@ export async function updateProgramStatus(req: Request, res: Response, next: Nex
     next(error);
   }
 }
+
+export async function deleteProgram(req: Request, res: Response, next: NextFunction) {
+  try {
+    const progId = req.params.id;
+    
+    // Deleting the program will cascade delete plans, curriculum_days, and tasks 
+    // due to ON DELETE CASCADE constraints.
+    const result = await query(`DELETE FROM programs WHERE id = $1 RETURNING id`, [progId]);
+    
+    if (result.rows.length === 0) {
+      res.status(404).json({ success: false, message: "Program not found" });
+      return;
+    }
+    
+    res.status(200).json({ success: true, message: "Program deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function createProgram(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { name, description, duration, mode, highlights } = req.body;
+    
+    if (!name || !description) {
+      res.status(400).json({ success: false, message: "Name and description are required" });
+      return;
+    }
+    
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const id = `${slug}-${Date.now().toString(36)}`;
+    
+    const highlightsJson = JSON.stringify(highlights || []);
+    
+    const result = await query(
+      `INSERT INTO programs (id, name, description, duration, mode, highlights, status)
+       VALUES ($1, $2, $3, $4, $5, $6, 'draft')
+       RETURNING *`,
+      [id, name, description, duration || '', mode || '', highlightsJson]
+    );
+    
+    res.status(201).json({ success: true, data: result.rows[0], message: "Program created successfully" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function createPlan(req: Request, res: Response, next: NextFunction) {
+  try {
+    const programId = req.params.id;
+    const { name, price, duration_months, total_days } = req.body;
+    
+    if (!name || price === undefined || !duration_months || !total_days) {
+      res.status(400).json({ success: false, message: "Name, price, duration_months, and total_days are required" });
+      return;
+    }
+    
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const id = `${programId}-${slug}-${Date.now().toString(36)}`;
+    const price_paise = Math.round(Number(price) * 100);
+    
+    const result = await query(
+      `INSERT INTO plans (id, program_id, name, price_paise, currency, duration_months, total_days, status)
+       VALUES ($1, $2, $3, $4, 'INR', $5, $6, 'published')
+       RETURNING *`,
+      [id, programId, name, price_paise, Number(duration_months), Number(total_days)]
+    );
+    
+    res.status(201).json({ success: true, data: result.rows[0], message: "Plan created successfully" });
+  } catch (error) {
+    next(error);
+  }
+}

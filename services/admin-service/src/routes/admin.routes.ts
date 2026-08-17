@@ -13,6 +13,9 @@ router.get("/payments", adminController.getPayments);
 router.get("/students", adminController.getStudents);
 router.get("/students/:id", adminController.getStudentDetails);
 router.get("/programs", adminController.getPrograms);
+router.post("/programs", adminController.createProgram);
+router.post("/programs/:id/plans", adminController.createPlan);
 router.put("/programs/:id/status", adminController.updateProgramStatus);
+router.delete("/programs/:id", adminController.deleteProgram);
 
 export default router;

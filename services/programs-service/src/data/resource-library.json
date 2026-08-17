@@ -1,0 +1,7 @@
+[
+  { "id": "rlib_1", "title": "React Documentation", "type": "DOCUMENTATION", "url": "https://react.dev/", "description": "Official React documentation and guides.", "tags": ["react", "frontend"], "createdAt": "2026-06-01T00:00:00.000Z", "updatedAt": "2026-06-01T00:00:00.000Z", "archived": false },
+  { "id": "rlib_2", "title": "Node.js Documentation", "type": "DOCUMENTATION", "url": "https://nodejs.org/docs/latest/api/", "description": "Official Node.js API documentation.", "tags": ["node", "backend"], "createdAt": "2026-06-01T00:00:00.000Z", "updatedAt": "2026-06-01T00:00:00.000Z", "archived": false },
+  { "id": "rlib_3", "title": "GitHub Documentation", "type": "DOCUMENTATION", "url": "https://docs.github.com/", "description": "Guides for using GitHub and Git.", "tags": ["git", "github"], "createdAt": "2026-06-01T00:00:00.000Z", "updatedAt": "2026-06-01T00:00:00.000Z", "archived": false },
+  { "id": "rlib_4", "title": "Postman Learning Center", "type": "LINK", "url": "https://learning.postman.com/", "description": "Learn API testing with Postman.", "tags": ["api", "testing"], "createdAt": "2026-06-01T00:00:00.000Z", "updatedAt": "2026-06-01T00:00:00.000Z", "archived": false },
+  { "id": "rlib_5", "title": "TypeScript Handbook", "type": "DOCUMENTATION", "url": "https://www.typescriptlang.org/docs/handbook/", "description": "Official TypeScript handbook and reference.", "tags": ["typescript", "language"], "createdAt": "2026-06-01T00:00:00.000Z", "updatedAt": "2026-06-01T00:00:00.000Z", "archived": false }
+]
