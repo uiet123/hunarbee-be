@@ -13,7 +13,7 @@ import { getCurrencyPricing, getLivePlanPrice } from "./fx.service";
 import { provisionEnrollmentAccess } from "./provision.service";
 
 interface CreateOrderInput {
-  durationId: PaymentDurationId;
+  durationId: string;
   currency: PaymentCurrency;
   programId: string;
   applicantName: string;

@@ -8,6 +8,7 @@ const router = Router();
 router.use(requireAuth, requireAdmin);
 
 router.get("/stats", adminController.getStats);
+router.get("/analytics", adminController.getAnalytics);
 router.get("/applications", adminController.getApplications);
 router.get("/payments", adminController.getPayments);
 router.get("/students", adminController.getStudents);
@@ -17,5 +18,8 @@ router.post("/programs", adminController.createProgram);
 router.post("/programs/:id/plans", adminController.createPlan);
 router.put("/programs/:id/status", adminController.updateProgramStatus);
 router.delete("/programs/:id", adminController.deleteProgram);
+router.delete("/plans/:id", adminController.deletePlan);
+router.put("/plans/:id", adminController.updatePlan);
+router.put("/plans/:id/status", adminController.updatePlanStatus);
 
 export default router;

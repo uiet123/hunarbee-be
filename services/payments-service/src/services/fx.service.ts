@@ -1,4 +1,5 @@
 import {
+  query,
   BASE_INR_PRICES,
   USD_FALLBACK_PRICES,
   AppError,
@@ -200,11 +201,30 @@ export async function getCurrencyPricing(
 
 export async function getLivePlanPrice(
   currency: PaymentCurrency,
-  durationId: PaymentDurationId
+  durationId: string
 ): Promise<{ amountMajor: number; pricing: CurrencyPricing }> {
   const pricing = await getCurrencyPricing(currency);
+  
+  const isStatic = durationId in BASE_INR_PRICES;
+  let basePriceMajor: number;
+
+  if (isStatic) {
+    basePriceMajor = pricing.plans[durationId as PaymentDurationId];
+  } else {
+    const result = await query<{ price: number }>("SELECT price_paise as price FROM plans WHERE id = $1 AND status = 'published'", [durationId]);
+    if (result.rows.length === 0) {
+      throw new AppError("Invalid or unavailable plan", 400);
+    }
+    const pricePaise = Number(result.rows[0].price);
+    const baseInr = pricePaise / 100;
+    
+    basePriceMajor = currency === "INR" 
+      ? baseInr 
+      : roundConvertedAmount(baseInr, pricing.rateFromInr || 1);
+  }
+
   return {
-    amountMajor: pricing.plans[durationId],
+    amountMajor: basePriceMajor,
     pricing,
   };
 }

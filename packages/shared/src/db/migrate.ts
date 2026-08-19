@@ -44,6 +44,8 @@ ALTER TABLE payments ADD COLUMN IF NOT EXISTS preferred_batch DATE;
 
 CREATE INDEX IF NOT EXISTS idx_payments_order_id ON payments (razorpay_order_id);
 CREATE INDEX IF NOT EXISTS idx_payments_email ON payments (applicant_email);
+CREATE INDEX IF NOT EXISTS idx_payments_status ON payments (status);
+CREATE INDEX IF NOT EXISTS idx_payments_created_at ON payments (created_at);
 
 CREATE TABLE IF NOT EXISTS enrollments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -74,6 +76,8 @@ CREATE INDEX IF NOT EXISTS idx_enrollments_email ON enrollments (email);
 CREATE INDEX IF NOT EXISTS idx_enrollments_program ON enrollments (program_id);
 CREATE INDEX IF NOT EXISTS idx_enrollments_batch ON enrollments (preferred_batch);
 CREATE INDEX IF NOT EXISTS idx_enrollments_user ON enrollments (user_id);
+CREATE INDEX IF NOT EXISTS idx_enrollments_status ON enrollments (status);
+CREATE INDEX IF NOT EXISTS idx_enrollments_created_at ON enrollments (created_at);
 
 CREATE TABLE IF NOT EXISTS programs (
   id VARCHAR(64) PRIMARY KEY,
@@ -128,6 +132,23 @@ CREATE TABLE IF NOT EXISTS tasks (
     CHECK (status IN ('active', 'draft')),
   resources JSONB DEFAULT '[]',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE TABLE IF NOT EXISTS sms_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  enrollment_id UUID REFERENCES enrollments(id) ON DELETE SET NULL,
+  phone VARCHAR(20) NOT NULL,
+  sms_type VARCHAR(20) NOT NULL
+    CHECK (sms_type IN ('enrollment', 'certificate')),
+  status VARCHAR(20) NOT NULL DEFAULT 'sent'
+    CHECK (status IN ('sent', 'failed')),
+  error_message TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS curriculum_store (
+  store_key VARCHAR(64) PRIMARY KEY,
+  data JSONB NOT NULL,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 `;

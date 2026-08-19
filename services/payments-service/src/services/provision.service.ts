@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { query, hashPassword } from "@hunarbee/shared";
+import { query, transaction, hashPassword } from "@hunarbee/shared";
 import { sendWelcomeEmail } from "./mail.service";
 
 const PROGRAM_TITLES: Record<string, string> = {
@@ -66,34 +66,36 @@ export async function provisionEnrollmentAccess(enrollmentId: string) {
   let isNewAccount = false;
 
   if (!userId) {
-    const existing = await query<{ id: string }>(
-      `SELECT id FROM users WHERE email = $1 LIMIT 1`,
-      [email]
-    );
-
-    if (existing.rows[0]) {
-      userId = existing.rows[0].id;
-    } else {
-      temporaryPassword = generateTemporaryPassword();
-      const passwordHash = await hashPassword(temporaryPassword);
-      const created = await query<{ id: string }>(
-        `INSERT INTO users (name, email, password_hash, role)
-         VALUES ($1, $2, $3, 'student')
-         RETURNING id`,
-        [enrollment.full_name, email, passwordHash]
+    await transaction(async (client) => {
+      const existing = await client.query<{ id: string }>(
+        `SELECT id FROM users WHERE email = $1 LIMIT 1`,
+        [email]
       );
-      userId = created.rows[0]?.id ?? null;
-      isNewAccount = Boolean(userId);
-    }
 
-    if (userId) {
-      await query(
-        `UPDATE enrollments
-         SET user_id = $1, updated_at = NOW()
-         WHERE id = $2`,
-        [userId, enrollment.id]
-      );
-    }
+      if (existing.rows[0]) {
+        userId = existing.rows[0].id;
+      } else {
+        temporaryPassword = generateTemporaryPassword();
+        const passwordHash = await hashPassword(temporaryPassword);
+        const created = await client.query<{ id: string }>(
+          `INSERT INTO users (name, email, password_hash, role)
+           VALUES ($1, $2, $3, 'student')
+           RETURNING id`,
+          [enrollment.full_name, email, passwordHash]
+        );
+        userId = created.rows[0]?.id ?? null;
+        isNewAccount = Boolean(userId);
+      }
+
+      if (userId) {
+        await client.query(
+          `UPDATE enrollments
+           SET user_id = $1, updated_at = NOW()
+           WHERE id = $2`,
+          [userId, enrollment.id]
+        );
+      }
+    });
   }
 
   if (enrollment.welcome_email_sent_at) {

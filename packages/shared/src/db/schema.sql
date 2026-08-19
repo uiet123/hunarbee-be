@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS payments (
 
 CREATE INDEX IF NOT EXISTS idx_payments_order_id ON payments (razorpay_order_id);
 CREATE INDEX IF NOT EXISTS idx_payments_email ON payments (applicant_email);
+CREATE INDEX IF NOT EXISTS idx_payments_status ON payments (status);
+CREATE INDEX IF NOT EXISTS idx_payments_created_at ON payments (created_at);
 
 /** Created only after payment is verified (paid). */
 CREATE TABLE IF NOT EXISTS enrollments (
@@ -64,3 +66,5 @@ CREATE INDEX IF NOT EXISTS idx_enrollments_email ON enrollments (email);
 CREATE INDEX IF NOT EXISTS idx_enrollments_program ON enrollments (program_id);
 CREATE INDEX IF NOT EXISTS idx_enrollments_batch ON enrollments (preferred_batch);
 CREATE INDEX IF NOT EXISTS idx_enrollments_user ON enrollments (user_id);
+CREATE INDEX IF NOT EXISTS idx_enrollments_status ON enrollments (status);
+CREATE INDEX IF NOT EXISTS idx_enrollments_created_at ON enrollments (created_at);

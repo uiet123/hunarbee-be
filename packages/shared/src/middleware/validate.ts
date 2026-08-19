@@ -123,7 +123,7 @@ export function fromMinorUnits(
 }
 
 export const createPaymentOrderSchema = z.object({
-  durationId: z.enum(PAYMENT_DURATION_IDS),
+  durationId: z.string().trim().min(1),
   currency: z
     .string()
     .trim()
